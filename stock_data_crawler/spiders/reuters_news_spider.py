@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import pymongo
 import datetime
 from ..items import NewsItem
+import logging
 
 
 class ReutersNewsSpider(scrapy.Spider):
@@ -14,21 +15,28 @@ class ReutersNewsSpider(scrapy.Spider):
             'stock_data_crawler.pipelines.NewsPipeline': 300
         }
     }
+    collection = pymongo.MongoClient().us.stocklist
 
     def start_requests(self):
-        collection = pymongo.MongoClient().us.stocklist
-        for i in collection.find().sort('Symbol', pymongo.ASCENDING):
-            symbol = i['Symbol']
-            exchange = i['Exchange']
-            name = i['Name']
-            start = datetime.date(year=2004, month=1, day=1)
-            one_day = datetime.timedelta(days=1)
-            end = datetime.date.today()
-            while end >= start:
-                datestr = end.strftime('%m%d%Y')
-                urlstr = self.url.format(symbol, self.suffix[exchange], datestr)
-                yield scrapy.Request(url=urlstr, meta={'symbol': symbol, 'name': name, 'date': datestr})
-                end -= one_day
+        stocklist = []
+        for i in self.collection.find().sort('Symbol', pymongo.ASCENDING):
+            stocklist.append(dict(i))
+        print('There are {} stocks'.format(len(stocklist)))
+        for i in stocklist:
+            try:
+                symbol = i['Symbol']
+                exchange = i['Exchange']
+                name = i['Name']
+                start = datetime.date(year=2015, month=1, day=1)
+                one_day = datetime.timedelta(days=1)
+                end = datetime.date.today()
+                while end >= start:
+                    datestr = end.strftime('%m%d%Y')
+                    urlstr = self.url.format(symbol, self.suffix[exchange], datestr)
+                    yield scrapy.Request(url=urlstr, meta={'symbol': symbol, 'name': name, 'date': datestr})
+                    end -= one_day
+            except Exception as e:
+                logging.error(e, i)
 
     def parse(self, response):
         symbol = response.meta.get('symbol')
