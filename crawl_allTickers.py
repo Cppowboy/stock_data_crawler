@@ -3,12 +3,11 @@ from urllib import request
 import csv
 import sys
 import numpy as np
-import pymongo
 
 
 def getTickers(percent):
-    # file = open('./tickerList.csv', 'w')
-    # writer = csv.writer(file, delimiter=',')
+    file = open('./tickerList.csv', 'w')
+    writer = csv.writer(file, delimiter=',')
     capStat, output = np.array([]), []
     for exchange in ["NASDAQ", "NYSE", "AMEX"]:
         url = "http://www.nasdaq.com/screening/companies-by-industry.aspx?exchange="
@@ -28,18 +27,14 @@ def getTickers(percent):
                 break
             except:
                 continue
-    collection = pymongo.MongoClient().us.stocklist
-    collection.ensure_index('Symbol', unique=True)
     for data in output:
         marketCap = float(data[3])
         if marketCap < np.percentile(capStat, 100 - percent): continue
-        # writer.writerow(data)
-        d = dict(zip(['Symbol', 'Name', 'Exchange', 'MarketCap'], data))
-        collection.update({'Symbol': d['Symbol']}, d, upsert=True)
+        writer.writerow(data)
 
 
 def main():
-    percent = 100
+    percent = 20
     s = getTickers(percent)  # keep the top N% market-cap companies
 
 
