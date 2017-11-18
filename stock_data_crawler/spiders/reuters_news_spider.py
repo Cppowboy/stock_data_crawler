@@ -4,6 +4,7 @@ import pymongo
 import datetime
 from ..items import NewsItem
 import logging
+import csv
 
 
 class ReutersNewsSpider(scrapy.Spider):
@@ -19,14 +20,18 @@ class ReutersNewsSpider(scrapy.Spider):
 
     def start_requests(self):
         stocklist = []
-        for i in self.collection.find().sort('Symbol', pymongo.ASCENDING):
-            stocklist.append(dict(i))
+        # for i in self.collection.find().sort('Symbol', pymongo.ASCENDING):
+        #     stocklist.append(dict(i))
+        with open('tickerList.csv') as csvfile:
+            reader = csv.reader(csvfile, delimiter=',')
+            for row in reader:
+                stocklist.append(row)
         print('There are {} stocks'.format(len(stocklist)))
         for i in stocklist:
             try:
-                symbol = i['Symbol']
-                exchange = i['Exchange']
-                name = i['Name']
+                symbol = i[0]
+                exchange = i[2]
+                name = i[1]
                 start = datetime.date(year=2015, month=1, day=1)
                 one_day = datetime.timedelta(days=1)
                 end = datetime.date.today()
