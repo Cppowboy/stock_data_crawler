@@ -4,6 +4,17 @@ This project is used to crawl stock related data for another project.[Sentiment 
 
 
 1. crawl ticker list from NASDAQ
+
+```shell
+python crawl_allTickers.py
+```
+
 2. crawl news headlines from Reuters
+
+```shell
+python main.py # this will run a scrapy crawler to get reuters news and save the data to mongodb
+python save_news_to_csv.py # fetch news data from mongodb and save it to csv file
+```
+
 3. crawl historical stock price from yahoo finance
 
