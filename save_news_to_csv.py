@@ -17,7 +17,7 @@ for col_name in sorted(db.collection_names()):
     col_count += 1
     print('processing ', col_name)
     for k in col.find():
-        data = [k['symbol'], k['name'], reformat(k['date']), k['title'], k['content']]
+        data = [k['symbol'], k['name'], reformat(k['date']), k['title'], k['content'], k['news_type']]
         writer.writerow(data)
         news_count += 1
 print(col_count, 'stocks, and', news_count, 'pieces of news')
