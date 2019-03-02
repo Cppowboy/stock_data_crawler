@@ -5,6 +5,8 @@ import datetime
 from ..items import NewsItem
 import logging
 import csv
+import time
+import random
 
 
 class ReutersNewsSpider(scrapy.Spider):
@@ -63,3 +65,4 @@ class ReutersNewsSpider(scrapy.Spider):
             else:
                 item['news_type'] = 'normal'
             yield item
+        time.sleep(random.randint(5, 10))

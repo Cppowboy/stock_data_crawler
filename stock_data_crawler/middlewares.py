@@ -6,6 +6,9 @@
 # http://doc.scrapy.org/en/latest/topics/spider-middleware.html
 
 from scrapy import signals
+from scrapy.conf import settings
+import base64
+import random
 
 
 class StockDataCrawlerSpiderMiddleware(object):
@@ -54,3 +57,17 @@ class StockDataCrawlerSpiderMiddleware(object):
 
     def spider_opened(self, spider):
         spider.logger.info('Spider opened: %s' % spider.name)
+
+
+class RandomUserAgent(object):
+
+    def process_request(self, request, spider):
+        useragent = random.choice(settings["USER_AGENTS"])
+        # print(useragent)
+        request.headers.setdefault('User-Agent', useragent)
+
+# ---------------------
+# 作者：zupzng
+# 来源：CSDN
+# 原文：https: // blog.csdn.net / zupzng / article / details / 80032018
+# 版权声明：本文为博主原创文章，转载请附上博文链接！
