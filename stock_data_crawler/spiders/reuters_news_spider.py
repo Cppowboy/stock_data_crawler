@@ -41,6 +41,7 @@ class ReutersNewsSpider(scrapy.Spider):
                     datestr = end.strftime('%m%d%Y')
                     urlstr = self.url.format(symbol, self.suffix[exchange], datestr)
                     yield scrapy.Request(url=urlstr, meta={'symbol': symbol, 'name': name, 'date': datestr})
+                    time.sleep(random.randint(5, 10))
                     end -= one_day
             except Exception as e:
                 logging.error(e, i)
@@ -65,4 +66,3 @@ class ReutersNewsSpider(scrapy.Spider):
             else:
                 item['news_type'] = 'normal'
             yield item
-        time.sleep(random.randint(5, 10))
