@@ -41,7 +41,7 @@ class ReutersNewsSpider(scrapy.Spider):
                     datestr = end.strftime('%m%d%Y')
                     urlstr = self.url.format(symbol, self.suffix[exchange], datestr)
                     yield scrapy.Request(url=urlstr, meta={'symbol': symbol, 'name': name, 'date': datestr})
-                    time.sleep(random.randint(5, 10))
+                    time.sleep(random.randint(1, 4))
                     end -= one_day
             except Exception as e:
                 logging.error(e, i)
@@ -59,8 +59,8 @@ class ReutersNewsSpider(scrapy.Spider):
             item['symbol'] = symbol
             item['name'] = name
             item['date'] = datestr
-            item['title'] = content[i].h2.get_text().replace(",", " ").replace("\n", " ")
-            item['content'] = content[i].p.get_text().replace(",", " ").replace("\n", " ")
+            item['title'] = content[i].h2.get_text().replace("\n", " ")
+            item['content'] = content[i].p.get_text().replace("\n", " ")
             if i == 0 and len(soup.find_all("div", class_="topStory")) > 0:
                 item['news_type'] = 'topStory'
             else:

@@ -13,6 +13,8 @@ db = client.us
 col_count = 0
 news_count = 0
 for col_name in sorted(db.collection_names()):
+    if col_name == 'system.indexes':
+        continue
     col = db[col_name]
     col_count += 1
     print('processing ', col_name)
